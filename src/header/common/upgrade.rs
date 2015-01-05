@@ -1,6 +1,7 @@
 use header::{Header, HeaderFormat};
 use std::fmt::{mod, Show};
 use std::str::FromStr;
+use std::ops::{Deref, DerefMut};
 use header::shared::util::{from_comma_delimited, fmt_comma_delimited};
 
 use self::Protocol::{WebSocket, ProtocolExt};

@@ -1,5 +1,6 @@
 use std::fmt;
 use std::str::FromStr;
+use std::ops::{Deref, DerefMut};
 use header::{Header, HeaderFormat};
 use header::shared::util::{from_one_comma_delimited, fmt_comma_delimited};
 

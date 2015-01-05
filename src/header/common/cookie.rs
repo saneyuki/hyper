@@ -1,6 +1,7 @@
 use header::{Header, HeaderFormat};
 use std::fmt::{mod, Show};
 use std::str::from_utf8;
+use std::ops::{Deref, DerefMut};
 
 use cookie::Cookie;
 use cookie::CookieJar;

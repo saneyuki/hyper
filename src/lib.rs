@@ -1,4 +1,4 @@
-#![feature(macro_rules, phase, default_type_params, slicing_syntax, globs)]
+#![feature(associated_types, macro_rules, phase, default_type_params, old_orphan_check, slicing_syntax, globs)]
 #![deny(missing_docs)]
 #![deny(warnings)]
 #![experimental]

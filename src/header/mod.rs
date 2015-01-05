@@ -7,10 +7,13 @@
 use std::any::Any;
 use std::ascii::AsciiExt;
 use std::borrow::Cow::{Borrowed, Owned};
+use std::borrow::IntoCow;
 use std::fmt::{mod, Show};
 use std::intrinsics::TypeId;
+use std::iter::FromIterator;
 use std::raw::TraitObject;
-use std::str::{SendStr, FromStr};
+use std::str::FromStr;
+use std::string::CowString;
 use std::collections::HashMap;
 use std::collections::hash_map::{Iter, Entry};
 use std::{hash, mem};
@@ -281,7 +284,9 @@ pub struct HeadersItems<'a> {
     inner: Iter<'a, CaseInsensitive, MuCell<Item>>
 }
 
-impl<'a> Iterator<HeaderView<'a>> for HeadersItems<'a> {
+impl<'a> Iterator for HeadersItems<'a> {
+    type Item = HeaderView<'a>;
+
     fn next(&mut self) -> Option<HeaderView<'a>> {
         match self.inner.next() {
             Some((k, v)) => Some(HeaderView(k, v)),
@@ -330,7 +335,7 @@ impl<'a> fmt::Show for HeaderView<'a> {
 }
 
 impl<'a> Extend<HeaderView<'a>> for Headers {
-    fn extend<I: Iterator<HeaderView<'a>>>(&mut self, mut iter: I) {
+    fn extend<I: Iterator<Item=HeaderView<'a>>>(&mut self, mut iter: I) {
         for header in iter {
             self.data.insert((*header.0).clone(), (*header.1).clone());
         }
@@ -338,7 +343,7 @@ impl<'a> Extend<HeaderView<'a>> for Headers {
 }
 
 impl<'a> FromIterator<HeaderView<'a>> for Headers {
-    fn from_iter<I: Iterator<HeaderView<'a>>>(iter: I) -> Headers {
+    fn from_iter<I: Iterator<Item=HeaderView<'a>>>(iter: I) -> Headers {
         let mut headers = Headers::new();
         headers.extend(iter);
         headers
@@ -454,7 +459,7 @@ impl fmt::Show for Box<HeaderFormat + Send + Sync> {
 
 /// Case-insensitive string.
 //#[derive(Clone)]
-pub struct CaseInsensitive(SendStr);
+pub struct CaseInsensitive<'a>(CowString<'a>);
 
 impl FromStr for CaseInsensitive {
     fn from_str(s: &str) -> Option<CaseInsensitive> {
@@ -488,7 +493,7 @@ impl PartialEq for CaseInsensitive {
     }
 }
 
-impl Eq for CaseInsensitive {}
+impl<'a> Eq for CaseInsensitive<'a> {}
 
 impl<H: hash::Writer> hash::Hash<H> for CaseInsensitive {
     #[inline]

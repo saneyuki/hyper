@@ -1,6 +1,8 @@
 //! Status Codes
+use std::cmp::Ordering;
 use std::fmt;
 use std::mem::transmute;
+use std::num::{FromPrimitive, ToPrimitive};
 
 // shamelessly lifted from Teepee. I tried a few schemes, this really
 // does seem like the best.
@@ -1639,11 +1641,11 @@ impl Ord for StatusCode {
     #[inline]
     fn cmp(&self, other: &StatusCode) -> Ordering {
         if *self < *other {
-            Less
+            Ordering::Less
         } else if *self > *other {
-            Greater
+            Ordering::Greater
         } else {
-            Equal
+            Ordering::Equal
         }
     }
 }

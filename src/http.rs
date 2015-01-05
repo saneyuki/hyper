@@ -4,7 +4,8 @@ use std::cmp::min;
 use std::fmt;
 use std::io::{mod, Reader, IoResult, BufWriter};
 use std::num::from_u16;
-use std::str::{mod, SendStr, FromStr};
+use std::str::{mod, FromStr};
+use std::string::CowString;
 
 use url::Url;
 use url::ParseError as UrlError;
@@ -579,15 +580,15 @@ pub fn read_request_line<R: Reader>(stream: &mut R) -> HttpResult<RequestLine> {
 /// `status-line = HTTP-version SP status-code SP reason-phrase CRLF`
 ///
 /// However, reason-phrase is absolutely useless, so its tossed.
-pub type StatusLine = (HttpVersion, RawStatus);
+pub type StatusLine<'a> = (HttpVersion, RawStatus<'a>);
 
 /// The raw status code and reason-phrase.
 #[derive(PartialEq, Show)]
-pub struct RawStatus(pub u16, pub SendStr);
+pub struct RawStatus<'a>(pub u16, pub CowString<'a>);
 
-impl Clone for RawStatus {
-    fn clone(&self) -> RawStatus {
-        RawStatus(self.0, self.1.clone().into_cow())
+impl<'a, 'b> Clone for RawStatus<'a> {
+    fn clone(&self) -> RawStatus<'b> {
+        RawStatus(self.0, self.1.clone())
     }
 }
 

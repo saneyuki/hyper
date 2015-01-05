@@ -1,6 +1,7 @@
 use header::{Header, HeaderFormat};
 use method::Method;
 use std::fmt::{mod};
+use std::ops::{Deref, DerefMut};
 use header::shared::util::{from_comma_delimited, fmt_comma_delimited};
 
 /// The `Allow` header.

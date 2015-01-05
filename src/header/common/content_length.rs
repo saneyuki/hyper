@@ -1,4 +1,5 @@
 use std::fmt::{mod, Show};
+use std::ops::{Deref, DerefMut};
 
 use header::{Header, HeaderFormat};
 use header::shared::util::from_one_raw_str;

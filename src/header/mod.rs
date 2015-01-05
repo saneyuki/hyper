@@ -16,7 +16,7 @@ use std::collections::hash_map::{Iter, Entry};
 use std::{hash, mem};
 
 use mucell::MuCell;
-use uany::{UncheckedAnyDowncast, UncheckedAnyMutDowncast};
+use uany::UnsafeAnyExt;
 
 use http::{mod, LineEnding};
 use {HttpResult};
@@ -81,21 +81,24 @@ impl HeaderFormat {
     }
 }
 
-impl<'a> UncheckedAnyDowncast<'a> for &'a HeaderFormat {
+
+impl<'a> UnsafeAnyExt for HeaderFormat {
     #[inline]
-    unsafe fn downcast_ref_unchecked<T: 'static>(self) -> &'a T {
-        let to: TraitObject = mem::transmute_copy(&self);
-        mem::transmute(to.data)
+    unsafe fn downcast_ref_unchecked<T: 'static>(&self) -> &T {
+        mem::transmute(mem::transmute::<&HeaderFormat, TraitObject>(self).data)
+    }
+
+    #[inline]
+    unsafe fn downcast_mut_unchecked<T: 'static>(&mut self) -> &mut T {
+        mem::transmute(mem::transmute::<&mut HeaderFormat, TraitObject>(self).data)
+    }
+
+    #[inline]
+    unsafe fn downcast_unchecked<T: 'static>(self: Box<HeaderFormat>) -> Box<T>  {
+        mem::transmute(mem::transmute::<Box<HeaderFormat>, TraitObject>(self).data)
     }
 }
 
-impl<'a> UncheckedAnyMutDowncast<'a> for &'a mut HeaderFormat {
-    #[inline]
-    unsafe fn downcast_mut_unchecked<T: 'static>(self) -> &'a mut T {
-        let to: TraitObject = mem::transmute_copy(&self);
-        mem::transmute(to.data)
-    }
-}
 
 impl Clone for Box<HeaderFormat + Send + Sync> {
     #[inline]

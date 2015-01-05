@@ -10,7 +10,7 @@ use std::io::net::tcp::{TcpStream, TcpListener, TcpAcceptor};
 use std::mem::{mod, transmute, transmute_copy};
 use std::raw::{mod, TraitObject};
 
-use uany::UncheckedBoxAnyDowncast;
+use uany::UnsafeAnyExt;
 use openssl::ssl::{Ssl, SslStream, SslContext, VerifyCallback};
 use openssl::ssl::SslVerifyMode::SslVerifyPeer;
 use openssl::ssl::SslMethod::Sslv23;
@@ -301,7 +301,7 @@ fn lift_ssl_error(ssl: SslError) -> IoError {
 #[cfg(test)]
 mod tests {
     use std::boxed::BoxAny;
-    use uany::UncheckedBoxAnyDowncast;
+    use uany::UnsafeAnyExt;
 
     use mock::MockStream;
     use super::NetworkStream;
